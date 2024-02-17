@@ -1,9 +1,32 @@
 import { defaultAbiCoder } from 'ethers/lib/utils'
+import { MaxUint256 } from '@uniswap/permit2-sdk'
 import permit2 from '../src/permit2';
 import utils from '../src/utils'
 import ds from './ds'
 
 const swap = {
+    async checkAllowance(tokenAddress: string, signer: any, spender: string) {
+        try {
+            const erc20 = utils.erc20Instance(tokenAddress, signer)
+            const allowance = await erc20.allowance(signer.address, spender);
+            return allowance.toString()
+        } catch (error) {
+            console.error(`stellaSwap::error@checkAllowance: ${error}`);
+            return error
+        }
+    },
+    async approve(tokenAddress: string, amountIn: string, signer: any, spender: string) {
+        try {
+            const amount = amountIn === '0' ? MaxUint256.toString() : amountIn
+            const erc20 = utils.erc20Instance(tokenAddress, signer)
+            const connectedErc20 = erc20.connect(signer);
+            const tx = await connectedErc20.approve(spender, amount);
+            return tx.hash
+        } catch (error) {
+            console.error(`stellaSwap::error@approve: ${error}`);
+            return error
+        }
+    },
     async getSwapQuote(
         token0Addr: string,
         token1Addr: string,
