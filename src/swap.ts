@@ -37,40 +37,59 @@ const swap = {
             const { result } = await swap.getSwapQuote(token0Addr, token1Addr, amountIn, account, slippage)
             const { commands, inputs } = result?.execution
 
-            const { signature, permit } = await permit2.getPermit2Signature(
-                token0Addr, amountIn, signer
-            )
+            if (token0Addr.toLowerCase() === 'ETH'.toLowerCase()) {
+                try {
+                    const tx = await connectedAggregator?.execute(commands, inputs, {
+                        from: account,
+                        value: amountIn,
+                    })
+                    return tx.hash
+                } catch (error) {
+                    console.error(`stellaSwap::error@executeNativeSwap: ${error}`);
+                    return error
+                }
+            } else {
+                try {
+                    const { signature, permit } = await permit2.getPermit2Signature(
+                        token0Addr, amountIn, signer
+                    )
 
-            const permit2Command = { instruction: 4 }
-            const permit2Input = defaultAbiCoder.encode(
-                ['uint256', 'address', 'address', 'address', 'uint256', 'uint256', 'bytes'],
-                [
-                    permit.permitted.amount,
-                    account,
-                    permit.spender,
-                    permit.permitted.token,
-                    permit.nonce,
-                    permit.deadline,
-                    signature,
-                ]
-            )
+                    const permit2Command = { instruction: 4 }
+                    const permit2Input = defaultAbiCoder.encode(
+                        ['uint256', 'address', 'address', 'address', 'uint256', 'uint256', 'bytes'],
+                        [
+                            permit.permitted.amount,
+                            account,
+                            permit.spender,
+                            permit.permitted.token,
+                            permit.nonce,
+                            permit.deadline,
+                            signature,
+                        ]
+                    )
 
-            commands.unshift(permit2Command)
-            inputs.unshift(permit2Input)
+                    commands.unshift(permit2Command)
+                    inputs.unshift(permit2Input)
 
-            const sweeps = commands.filter((command: any) => command.instruction === 7)
-            const permits = commands.filter((command: any) => command.instruction === 4)
+                    const sweeps = commands.filter((command: any) => command.instruction === 7)
+                    const permits = commands.filter((command: any) => command.instruction === 4)
 
-            if (sweeps.length >= 2 && permits.length == 1) {
-                const tx = await connectedAggregator?.execute(commands, inputs)
-                return tx.hash
+                    if (sweeps.length >= 2 && permits.length == 1) {
+                        const tx = await connectedAggregator?.execute(commands, inputs)
+                        return tx.hash
+                    }
+
+                    throw new Error('Minimum 2 sweeps and 1 permit required')
+                } catch (error) {
+                    console.error(`stellaSwap::error@executeERCSwap: ${error}`);
+                    return error
+                }
             }
-
-            throw new Error('Minimum 2 sweeps and 1 permit required')
         } catch (error: any) {
             console.error(`stellaSwap::error@executeSwap: ${error}`);
             return error
         }
     }
 }
+
 export default swap;
