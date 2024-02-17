@@ -1,0 +1,215 @@
+[
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint8",
+                "name": "version",
+                "type": "uint8"
+            }
+        ],
+        "name": "Initialized",
+        "type": "event"
+    },
+    {
+        "inputs": [],
+        "name": "WITNESS_TYPEHASH",
+        "outputs": [
+            {
+                "internalType": "bytes32",
+                "name": "",
+                "type": "bytes32"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "WITNESS_TYPE_STRING",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "enum AggregatorBase.InstructionType",
+                        "name": "instruction",
+                        "type": "uint8"
+                    }
+                ],
+                "internalType": "struct AggregatorBase.Command[]",
+                "name": "commands",
+                "type": "tuple[]"
+            },
+            {
+                "internalType": "bytes[]",
+                "name": "inputs",
+                "type": "bytes[]"
+            }
+        ],
+        "name": "execute",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "contract IAlgebraSwapRouter",
+                        "name": "v3router",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "contract IStellaSwapV2Router02",
+                        "name": "v2router",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "contract IStableSwapRouter",
+                        "name": "stableRouter",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "contract ISignatureTransfer",
+                        "name": "permit2",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "contract IWETH",
+                        "name": "weth",
+                        "type": "address"
+                    }
+                ],
+                "internalType": "struct RouterParameters",
+                "name": "params",
+                "type": "tuple"
+            }
+        ],
+        "name": "initialize",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "contract IAlgebraSwapRouter",
+                        "name": "v3router",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "contract IStellaSwapV2Router02",
+                        "name": "v2router",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "contract IStableSwapRouter",
+                        "name": "stableRouter",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "contract ISignatureTransfer",
+                        "name": "permit2",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "contract IWETH",
+                        "name": "weth",
+                        "type": "address"
+                    }
+                ],
+                "internalType": "struct RouterParameters",
+                "name": "params",
+                "type": "tuple"
+            }
+        ],
+        "name": "initializerr",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "permit2",
+        "outputs": [
+            {
+                "internalType": "contract ISignatureTransfer",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "stableRouter",
+        "outputs": [
+            {
+                "internalType": "contract IStableSwapRouter",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "v2router",
+        "outputs": [
+            {
+                "internalType": "contract IStellaSwapV2Router02",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "v3Router",
+        "outputs": [
+            {
+                "internalType": "contract IAlgebraSwapRouter",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "weth",
+        "outputs": [
+            {
+                "internalType": "contract IWETH",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "stateMutability": "payable",
+        "type": "receive"
+    }
+]
