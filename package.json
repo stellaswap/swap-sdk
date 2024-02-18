@@ -1,8 +1,8 @@
 {
-  "name": "swap-sdk",
-  "version": "0.0.1",
+  "name": "@stellaswap/swap-sdk",
+  "version": "0.0.4",
   "description": "StellaSwap Swap SDK",
-  "main": "index.ts",
+  "main": "dist/index.js",
   "scripts": {
     "test": "jest --config jest.config.js",
     "build": "tsc"

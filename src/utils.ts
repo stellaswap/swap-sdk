@@ -1,5 +1,3 @@
-const crypto = require('crypto');
-
 import { AGGREGATOR_ADDRESS, PERMIT2_ADDRESS } from './constants';
 import AGGREGATOR_ABI from './abis/aggregator.json'
 import PERMIT2_ABI from './abis/permit2.json'
@@ -19,7 +17,6 @@ const utils = {
     async calcNonces(signer: any) {
         const permit2 = utils.getPermit2ContractInstance(signer)
         const array = new Uint32Array(21)
-        crypto.getRandomValues(array)
 
         let nonce = await permit2.getNonce(await signer.getAddress(), array[20])
 
