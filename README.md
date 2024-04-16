@@ -1,4 +1,4 @@
-# Stella Swap SDK
+# StellaSwap SDK
 ### Description
 The @stellaswap/swap-sdk provides functionality for integrating swap on Moonbeam into any app or plugin. StellaSwap SDK allows end-users to exchange tokens seamlessly on Moonbeam network.
 
@@ -43,7 +43,7 @@ To get ```amountOut``` of a trade use ```getQuote```. For ```account``` it can b
 const quote = await stellaSwap.getQuote(token0Addr, token1Addr, amountIn, account, slippage);
 ```
 ##### Response
-To filterout ```amountOut``` use ```response.result.amountOut```. For the reset of the response, it includes;
+To filter out ```amountOut``` use ```quote.result.amountOut```. For the rest of the response, it includes;
 - Complete trade path.
 - Execution with commands and inputs
 
