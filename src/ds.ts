@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const BASE_ROUTER_URL = 'https://router-api.stellaswap.com/api/v2/'
+const BASE_ROUTER_URL = 'https://api.router.stellaswap.com/api/v2/'
 
 const getQuote = (body: any) => {
     return axios.get(

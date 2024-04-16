@@ -1,4 +1,4 @@
-import { defaultAbiCoder } from 'ethers/lib/utils'
+import { defaultAbiCoder } from '@ethersproject/abi'
 import { MaxUint256 } from '@uniswap/permit2-sdk'
 import permit2 from '../src/permit2';
 import utils from '../src/utils'

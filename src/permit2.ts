@@ -1,7 +1,7 @@
 
 import { PermitTransferFrom, Witness, SignatureTransfer, MaxUint256 } from '@uniswap/permit2-sdk'
 import { AGGREGATOR_ADDRESS, PERMIT2_ADDRESS } from '../src/constants'
-import { utils as etherUtils } from 'ethers'
+import { joinSignature, splitSignature } from "@ethersproject/bytes";
 import utils from './utils'
 
 const permit2 = {
@@ -34,12 +34,12 @@ const permit2 = {
 
         const signature = await signer._signTypedData(domain, types, values)
 
-        let { r, s, v } = etherUtils.splitSignature(signature)
+        let { r, s, v } = splitSignature(signature)
 
         if (v == 0) v = 27
         if (v == 1) v = 28
 
-        const joined = etherUtils.joinSignature({ r, s, v })
+        const joined = joinSignature({ r, s, v })
 
         return { signature: joined, permit, witness }
     }

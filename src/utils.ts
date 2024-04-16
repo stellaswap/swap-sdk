@@ -1,18 +1,18 @@
 import { AGGREGATOR_ADDRESS, PERMIT2_ADDRESS } from './constants';
+import { Contract } from '@ethersproject/contracts';
 import AGGREGATOR_ABI from './abis/aggregator.json'
 import PERMIT2_ABI from './abis/permit2.json'
 import ERC20_ABI from './abis/erc20.json'
-import { ethers } from 'ethers'
 
 const utils = {
     erc20Instance(tokenAddress: string, signer: any) {
-        return new ethers.Contract(tokenAddress, ERC20_ABI, signer.provider);
+        return new Contract(tokenAddress, ERC20_ABI, signer.provider);
     },
     getPermit2ContractInstance(signer: any) {
-        return new ethers.Contract(PERMIT2_ADDRESS, PERMIT2_ABI, signer.provider);
+        return new Contract(PERMIT2_ADDRESS, PERMIT2_ABI, signer.provider);
     },
     getAggregatorContractInstance(signer: any) {
-        return new ethers.Contract(AGGREGATOR_ADDRESS, AGGREGATOR_ABI, signer.provider);
+        return new Contract(AGGREGATOR_ADDRESS, AGGREGATOR_ABI, signer.provider);
     },
     async calcNonces(signer: any) {
         const permit2 = utils.getPermit2ContractInstance(signer)
