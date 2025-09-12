@@ -1,118 +1,156 @@
-import { defaultAbiCoder } from '@ethersproject/abi'
-import { MaxUint256 } from '@uniswap/permit2-sdk'
-import permit2 from '../src/permit2';
+import { ALGEBRA_ROUTER_ADDRESS, BATCH_PRECOMPILE_ADDRESS, weth } from "./constants";
+import { Percent, Token, ZERO } from "@cryptoalgebra/fuse-sdk";
+
+import { ApolloClient } from "@apollo/client";
+import { BigNumber } from '@ethersproject/bignumber';
+import { MaxUint256 } from "@ethersproject/constants"
+import { Signer } from '@ethersproject/abstract-signer'
 import utils from '../src/utils'
-import ds from './ds'
 
 const swap = {
-    async checkAllowance(tokenAddress: string, signer: any, spender: string) {
+    async checkAllowance(signer: Signer, tokenAddress: string): Promise<string | unknown> {
         try {
-            const erc20 = utils.erc20Instance(tokenAddress, signer)
-            const allowance = await erc20.allowance(signer.address, spender);
+            const account = await signer.getAddress()
+            const token = await utils.getToken(signer, tokenAddress)
+            const erc20 = utils.getErc20Instance(signer, token?.wrapped.address as string)
+            const allowance = await erc20.allowance(account, token?.wrapped.address)
             return allowance.toString()
-        } catch (error) {
-            console.error(`stellaSwap::error@checkAllowance: ${error}`);
-            return error
+        } catch (error: any) {
+            throw error
         }
     },
-    async approve(tokenAddress: string, amountIn: string, signer: any, spender: string) {
+    async approve(signer: Signer, tokenAddress: string, amountIn: string): Promise<string | unknown> {
         try {
             const amount = amountIn === '0' ? MaxUint256.toString() : amountIn
-            const erc20 = utils.erc20Instance(tokenAddress, signer)
-            const connectedErc20 = erc20.connect(signer);
-            const tx = await connectedErc20.approve(spender, amount);
-            return tx.hash
-        } catch (error) {
-            console.error(`stellaSwap::error@approve: ${error}`);
-            return error
-        }
-    },
-    async getSwapQuote(
-        token0Addr: string,
-        token1Addr: string,
-        amountIn: string,
-        account: string,
-        slippage: string
-    ): Promise<any> {
-        try {
-            const response = await ds.getQuote(
-                { token0Addr, token1Addr, amountIn, account, slippage }
-            )
-            return response?.data
+            const token = await utils.getToken(signer, tokenAddress)
+            const erc20 = utils.getErc20Instance(signer, token?.wrapped.address as string)
+            const connectedErc20 = erc20.connect(signer)
+            const tx = await connectedErc20.approve(token?.wrapped.address, amount)
+            const receipt = await tx.wait();
+            return receipt
         } catch (error: any) {
-            console.error(`stellaSwap::error@getSwapQuote: ${error}`);
-            return error
+            throw error
         }
     },
-
+    async unapprove(signer: Signer, tokenAddress: string): Promise<string | unknown> {
+        try {
+            const token = await utils.getToken(signer, tokenAddress)
+            const erc20 = utils.getErc20Instance(signer, token?.wrapped.address as string)
+            const connectedErc20 = erc20.connect(signer)
+            const tx = await connectedErc20.approve(token?.wrapped.address, ZERO.toString())
+            const receipt = await tx.wait();
+            return receipt
+        } catch (error: any) {
+            throw error
+        }
+    },
     async executeSwap(
+        client: ApolloClient,
+        signer: Signer,
+        amountIn: string,
         token0Addr: string,
         token1Addr: string,
-        amountIn: string,
-        signer: any,
-        slippage: string
+        slippage: string = '50' // .50%
     ): Promise<any> {
-        try {
-            const aggregator = utils.getAggregatorContractInstance(signer)
-            const connectedAggregator = aggregator.connect(signer);
-            const account = await signer.getAddress();
-
-            const { result } = await swap.getSwapQuote(token0Addr, token1Addr, amountIn, account, slippage)
-            const { commands, inputs } = result?.execution
-
-            if (token0Addr.toLowerCase() === 'ETH'.toLowerCase()) {
+        const [
+            account,
+            tokenIn,
+            tokenOut
+        ] = await Promise.all([
+            signer.getAddress(),
+            utils.getToken(signer, token0Addr) as Promise<Token>,
+            utils.getToken(signer, token1Addr) as Promise<Token>
+        ])
+        
+        const inputIsNative = tokenIn.isNative
+        const outputIsNative = tokenOut.isNative
+        
+        if (inputIsNative && weth.equals(tokenOut)) { // * wrap glmr
+            try {
+                const wethInstance = utils.getWethInstance(signer)
+                const connectedWeth = wethInstance.connect(signer);
+                const tx = await connectedWeth.deposit({
+                    from: account,
+                    value: BigNumber.from(amountIn) || ZERO.toString()
+                })
+                const receipt = await tx.wait();
+                return receipt
+            } catch (error: any) {
+                throw error
+            }
+        } else if (weth.equals(tokenIn) && outputIsNative) { // * unwrap wglmr
+            try {
+                const wethInstance = utils.getWethInstance(signer)
+                const connectedWeth = wethInstance.connect(signer);
+                const tx = await connectedWeth.withdraw(amountIn)
+                const receipt = await tx.wait();
+                return receipt
+            } catch (error: any) {
+                throw error
+            }
+        } else { // * swap
+            const allowedSlippage = new Percent(slippage, 10_000)
+            const deadline = await utils.getDeadline(signer)
+            const trade = await utils.getTrade(client, signer, tokenIn, tokenOut, amountIn)
+            const swapCallsData = await utils.getSwapCallsData(account, trade, allowedSlippage, deadline)
+            if (inputIsNative) { // * swap glmr
                 try {
-                    const tx = await connectedAggregator?.execute(commands, inputs, {
-                        from: account,
-                        value: amountIn,
-                    })
-                    return tx.hash
-                } catch (error) {
-                    console.error(`stellaSwap::error@executeNativeSwap: ${error}`);
-                    return error
-                }
-            } else {
-                try {
-                    const { signature, permit } = await permit2.getPermit2Signature(
-                        token0Addr, amountIn, signer
+                    const algebra = utils.getAlgebraContractInstance(signer)
+                    const connectedAlgebra = algebra.connect(signer);
+                    const tx = await connectedAlgebra?.multicall(
+                        swapCallsData?.at(-1)?.calldata, 
+                        {
+                            from: account,
+                            value: swapCallsData?.at(-1)?.value || ZERO.toString(),
+                        }
                     )
+                    const receipt = await tx.wait();
+                    return receipt
+                } catch (error: any) {
+                    throw error
+                }
+            } else { // * swap non-glmr token
+                try {
+                    const erc20 = utils.getErc20Instance(signer, tokenIn.address)
 
-                    const permit2Command = { instruction: 4 }
-                    const permit2Input = defaultAbiCoder.encode(
-                        ['uint256', 'address', 'address', 'address', 'uint256', 'uint256', 'bytes'],
+                    const batchPrecompileInstance = utils.getBatchPrecompileInstance(signer)
+                    const batchCalldata = batchPrecompileInstance.interface.encodeFunctionData(
+                        'batchAll', 
                         [
-                            permit.permitted.amount,
-                            account,
-                            permit.spender,
-                            permit.permitted.token,
-                            permit.nonce,
-                            permit.deadline,
-                            signature,
+                            [ 
+                                tokenIn.address, 
+                                ALGEBRA_ROUTER_ADDRESS, 
+                                tokenIn.address 
+                            ],
+                            [],
+                            [
+                                erc20.interface.encodeFunctionData(
+                                    'approve', 
+                                    [ALGEBRA_ROUTER_ADDRESS, MaxUint256],
+                                ),
+                                swapCallsData?.at(-1)?.calldata?.[0] as string,
+                                erc20.interface.encodeFunctionData(
+                                    'approve', 
+                                    [ALGEBRA_ROUTER_ADDRESS, ZERO.toString()]
+                                )
+                            ],
+                            [],
                         ]
                     )
-
-                    commands.unshift(permit2Command)
-                    inputs.unshift(permit2Input)
-
-                    const sweeps = commands.filter((command: any) => command.instruction === 7)
-                    const permits = commands.filter((command: any) => command.instruction === 4)
-
-                    if (sweeps.length >= 2 && permits.length == 1) {
-                        const tx = await connectedAggregator?.execute(commands, inputs)
-                        return tx.hash
-                    }
-
-                    throw new Error('Minimum 2 sweeps and 1 permit required')
-                } catch (error) {
-                    console.error(`stellaSwap::error@executeERCSwap: ${error}`);
-                    return error
+                    
+                    const txResponse = await signer.sendTransaction({
+                        to: BATCH_PRECOMPILE_ADDRESS,
+                        data: batchCalldata
+                    })
+                    
+                    const receipt = await txResponse.wait()
+                    return receipt
+                } catch (error: any) {
+                    throw error
                 }
             }
-        } catch (error: any) {
-            console.error(`stellaSwap::error@executeSwap: ${error}`);
-            return error
         }
-    }
+    },
 }
 
 export default swap;

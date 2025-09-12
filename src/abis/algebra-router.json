@@ -1,0 +1,315 @@
+[
+  {
+    "type": "constructor",
+    "inputs": [
+      { "name": "_factory", "internalType": "address", "type": "address" },
+      { "name": "_WNativeToken", "internalType": "address", "type": "address" },
+      { "name": "_poolDeployer", "internalType": "address", "type": "address" }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "inputs": [],
+    "name": "WNativeToken",
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "inputs": [
+      { "name": "amount0Delta", "internalType": "int256", "type": "int256" },
+      { "name": "amount1Delta", "internalType": "int256", "type": "int256" },
+      { "name": "_data", "internalType": "bytes", "type": "bytes" }
+    ],
+    "name": "algebraSwapCallback",
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "inputs": [
+      {
+        "name": "params",
+        "internalType": "struct ISwapRouter.ExactInputParams",
+        "type": "tuple",
+        "components": [
+          { "name": "path", "internalType": "bytes", "type": "bytes" },
+          { "name": "recipient", "internalType": "address", "type": "address" },
+          { "name": "deadline", "internalType": "uint256", "type": "uint256" },
+          { "name": "amountIn", "internalType": "uint256", "type": "uint256" },
+          {
+            "name": "amountOutMinimum",
+            "internalType": "uint256",
+            "type": "uint256"
+          }
+        ]
+      }
+    ],
+    "name": "exactInput",
+    "outputs": [
+      { "name": "amountOut", "internalType": "uint256", "type": "uint256" }
+    ],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "inputs": [
+      {
+        "name": "params",
+        "internalType": "struct ISwapRouter.ExactInputSingleParams",
+        "type": "tuple",
+        "components": [
+          { "name": "tokenIn", "internalType": "address", "type": "address" },
+          { "name": "tokenOut", "internalType": "address", "type": "address" },
+          { "name": "deployer", "internalType": "address", "type": "address" },
+          { "name": "recipient", "internalType": "address", "type": "address" },
+          { "name": "deadline", "internalType": "uint256", "type": "uint256" },
+          { "name": "amountIn", "internalType": "uint256", "type": "uint256" },
+          {
+            "name": "amountOutMinimum",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "limitSqrtPrice",
+            "internalType": "uint160",
+            "type": "uint160"
+          }
+        ]
+      }
+    ],
+    "name": "exactInputSingle",
+    "outputs": [
+      { "name": "amountOut", "internalType": "uint256", "type": "uint256" }
+    ],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "inputs": [
+      {
+        "name": "params",
+        "internalType": "struct ISwapRouter.ExactInputSingleParams",
+        "type": "tuple",
+        "components": [
+          { "name": "tokenIn", "internalType": "address", "type": "address" },
+          { "name": "tokenOut", "internalType": "address", "type": "address" },
+          { "name": "deployer", "internalType": "address", "type": "address" },
+          { "name": "recipient", "internalType": "address", "type": "address" },
+          { "name": "deadline", "internalType": "uint256", "type": "uint256" },
+          { "name": "amountIn", "internalType": "uint256", "type": "uint256" },
+          {
+            "name": "amountOutMinimum",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "limitSqrtPrice",
+            "internalType": "uint160",
+            "type": "uint160"
+          }
+        ]
+      }
+    ],
+    "name": "exactInputSingleSupportingFeeOnTransferTokens",
+    "outputs": [
+      { "name": "amountOut", "internalType": "uint256", "type": "uint256" }
+    ],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "inputs": [
+      {
+        "name": "params",
+        "internalType": "struct ISwapRouter.ExactOutputParams",
+        "type": "tuple",
+        "components": [
+          { "name": "path", "internalType": "bytes", "type": "bytes" },
+          { "name": "recipient", "internalType": "address", "type": "address" },
+          { "name": "deadline", "internalType": "uint256", "type": "uint256" },
+          { "name": "amountOut", "internalType": "uint256", "type": "uint256" },
+          {
+            "name": "amountInMaximum",
+            "internalType": "uint256",
+            "type": "uint256"
+          }
+        ]
+      }
+    ],
+    "name": "exactOutput",
+    "outputs": [
+      { "name": "amountIn", "internalType": "uint256", "type": "uint256" }
+    ],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "inputs": [
+      {
+        "name": "params",
+        "internalType": "struct ISwapRouter.ExactOutputSingleParams",
+        "type": "tuple",
+        "components": [
+          { "name": "tokenIn", "internalType": "address", "type": "address" },
+          { "name": "tokenOut", "internalType": "address", "type": "address" },
+          { "name": "deployer", "internalType": "address", "type": "address" },
+          { "name": "recipient", "internalType": "address", "type": "address" },
+          { "name": "deadline", "internalType": "uint256", "type": "uint256" },
+          { "name": "amountOut", "internalType": "uint256", "type": "uint256" },
+          {
+            "name": "amountInMaximum",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "limitSqrtPrice",
+            "internalType": "uint160",
+            "type": "uint160"
+          }
+        ]
+      }
+    ],
+    "name": "exactOutputSingle",
+    "outputs": [
+      { "name": "amountIn", "internalType": "uint256", "type": "uint256" }
+    ],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "inputs": [],
+    "name": "factory",
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "inputs": [
+      { "name": "data", "internalType": "bytes[]", "type": "bytes[]" }
+    ],
+    "name": "multicall",
+    "outputs": [
+      { "name": "results", "internalType": "bytes[]", "type": "bytes[]" }
+    ],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "inputs": [],
+    "name": "poolDeployer",
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "inputs": [],
+    "name": "refundNativeToken",
+    "outputs": [],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "inputs": [
+      { "name": "token", "internalType": "address", "type": "address" },
+      { "name": "value", "internalType": "uint256", "type": "uint256" },
+      { "name": "deadline", "internalType": "uint256", "type": "uint256" },
+      { "name": "v", "internalType": "uint8", "type": "uint8" },
+      { "name": "r", "internalType": "bytes32", "type": "bytes32" },
+      { "name": "s", "internalType": "bytes32", "type": "bytes32" }
+    ],
+    "name": "selfPermit",
+    "outputs": [],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "inputs": [
+      { "name": "token", "internalType": "address", "type": "address" },
+      { "name": "nonce", "internalType": "uint256", "type": "uint256" },
+      { "name": "expiry", "internalType": "uint256", "type": "uint256" },
+      { "name": "v", "internalType": "uint8", "type": "uint8" },
+      { "name": "r", "internalType": "bytes32", "type": "bytes32" },
+      { "name": "s", "internalType": "bytes32", "type": "bytes32" }
+    ],
+    "name": "selfPermitAllowed",
+    "outputs": [],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "inputs": [
+      { "name": "token", "internalType": "address", "type": "address" },
+      { "name": "nonce", "internalType": "uint256", "type": "uint256" },
+      { "name": "expiry", "internalType": "uint256", "type": "uint256" },
+      { "name": "v", "internalType": "uint8", "type": "uint8" },
+      { "name": "r", "internalType": "bytes32", "type": "bytes32" },
+      { "name": "s", "internalType": "bytes32", "type": "bytes32" }
+    ],
+    "name": "selfPermitAllowedIfNecessary",
+    "outputs": [],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "inputs": [
+      { "name": "token", "internalType": "address", "type": "address" },
+      { "name": "value", "internalType": "uint256", "type": "uint256" },
+      { "name": "deadline", "internalType": "uint256", "type": "uint256" },
+      { "name": "v", "internalType": "uint8", "type": "uint8" },
+      { "name": "r", "internalType": "bytes32", "type": "bytes32" },
+      { "name": "s", "internalType": "bytes32", "type": "bytes32" }
+    ],
+    "name": "selfPermitIfNecessary",
+    "outputs": [],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "inputs": [
+      { "name": "token", "internalType": "address", "type": "address" },
+      { "name": "amountMinimum", "internalType": "uint256", "type": "uint256" },
+      { "name": "recipient", "internalType": "address", "type": "address" }
+    ],
+    "name": "sweepToken",
+    "outputs": [],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "inputs": [
+      { "name": "token", "internalType": "address", "type": "address" },
+      { "name": "amountMinimum", "internalType": "uint256", "type": "uint256" },
+      { "name": "recipient", "internalType": "address", "type": "address" },
+      { "name": "feeBips", "internalType": "uint256", "type": "uint256" },
+      { "name": "feeRecipient", "internalType": "address", "type": "address" }
+    ],
+    "name": "sweepTokenWithFee",
+    "outputs": [],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "inputs": [
+      { "name": "amountMinimum", "internalType": "uint256", "type": "uint256" },
+      { "name": "recipient", "internalType": "address", "type": "address" }
+    ],
+    "name": "unwrapWNativeToken",
+    "outputs": [],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "inputs": [
+      { "name": "amountMinimum", "internalType": "uint256", "type": "uint256" },
+      { "name": "recipient", "internalType": "address", "type": "address" },
+      { "name": "feeBips", "internalType": "uint256", "type": "uint256" },
+      { "name": "feeRecipient", "internalType": "address", "type": "address" }
+    ],
+    "name": "unwrapWNativeTokenWithFee",
+    "outputs": [],
+    "stateMutability": "payable"
+  },
+  { "type": "receive", "stateMutability": "payable" }
+]
